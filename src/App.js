@@ -1,30 +1,29 @@
 import React from "react";
 import "./App.css";
-import { GoogleLogin, GoogleLogout } from "react-google-login";
+import { gapi } from "gapi-script";
 function App() {
-  const responseGoogle = (response) => {
-    console.log(response);
+  const DISCOVERY_DOCS = [
+    "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+  ];
+  const SCOPES = "https://www.googleapis.com/auth/calendar.events";
+  const clickHandler = () => {
+    gapi.load("client:auth2", () => {
+      console.log("object");
+      gapi.client.init({
+        apiKey: process.env.REACT_APP_API_KEY,
+        clienId: process.env.REACT_APP_CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES,
+      });
+      gapi.client.load("calendar", "v3", () => {
+        console.log("loaded");
+      });
+    });
   };
-  const logout = () => {
-    console.log("logout");
-  };
-
   return (
     <div className="App">
       <h2>Hello react!</h2>
-      <GoogleLogin
-        clientId={process.env.REACT_APP_CLIENT_ID}
-        buttonText="Login"
-        onSuccess={responseGoogle}
-        onFailure={responseGoogle}
-        cookiePolicy={"single_host_origin"}
-        isSignedIn={true}
-      />
-      <GoogleLogout
-        clientId={process.env.REACT_APP_CLIENT_ID}
-        buttonText="Logout"
-        onLogoutSuccess={logout}
-      ></GoogleLogout>
+      <button onClick={clickHandler}>Get calendar</button>
     </div>
   );
 }
