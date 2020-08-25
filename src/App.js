@@ -10,6 +10,18 @@ function App() {
     "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
   ];
   const SCOPES = "https://www.googleapis.com/auth/calendar.events";
+  const checkTheUser = () => {
+    gapi.load("client:auth2", () => {
+      gapi.client
+        .init({ clientId: process.env.REACT_APP_CLIENT_ID, scope: SCOPES })
+        .then(() =>
+          gapi.auth2.getAuthInstance().isSignedIn.get()
+            ? null
+            : gapi.auth2.getAuthInstance().signIn()
+        )
+        .then((resp) => console.log(resp));
+    });
+  };
   const onClickHanler = () => {
     gapi.load("client:auth2", () => {
       console.log("loaded client");
@@ -43,7 +55,15 @@ function App() {
         );
     });
   };
-  const onClickLogoutHandler = () => {};
+  const onClickLogoutHandler = () => {
+    gapi.load("client:auth2", () => {
+      gapi.client
+        .init({ clientId: process.env.REACT_APP_CLIENT_ID, scope: SCOPES })
+        .then(() => gapi.auth2.getAuthInstance().signOut())
+        .then(() => console.log("user signed out"));
+    });
+  };
+  checkTheUser();
   return (
     <div className="App">
       {eventsArray.map((event) => {
