@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [eventsArray, setEventsArray] = useState([]);
   const gapi = window.gapi;
   const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
   const API_KEY = process.env.REACT_APP_API_KEY;
@@ -37,6 +38,7 @@ function App() {
             .then((response) => {
               const events = response.result.items;
               console.log("EVENTS: ", events);
+              setEventsArray(events);
             })
         );
     });
@@ -44,6 +46,14 @@ function App() {
   const onClickLogoutHandler = () => {};
   return (
     <div className="App">
+      {eventsArray.map((event) => {
+        return (
+          <div key={event.id}>
+            <span>{event.start.dateTime.slice(0, 10)}</span>
+            <p>{event.summary}</p>
+          </div>
+        );
+      })}
       <button onClick={onClickHanler}>Get calendar</button>
       <button onClick={onClickLogoutHandler}>Logout</button>
     </div>
